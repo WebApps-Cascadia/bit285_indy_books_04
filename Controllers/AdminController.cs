@@ -53,8 +53,8 @@ namespace IndyBooks.Controllers
          * READ       
          */
         [HttpGet]
-        public IActionResult Index() => 
-                View("SearchResults", _db.Books.Include(b => b.Author).OrderBy(b=>b.SKU));
+        public IActionResult Index() =>
+                View("SearchResults", _db.Books.Include(b => b.Author).OrderBy(b => b.SKU));
         /***
          * DELETE
          */
