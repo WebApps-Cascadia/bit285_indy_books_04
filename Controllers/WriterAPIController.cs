@@ -31,10 +31,11 @@ namespace IndyBooks.Controllers
         public ActionResult Delete(long id)
         {
             //TODO: Search for record using Any(); if missing -> return NotFound();
-            if (!_db.Writers.Any(/* lambda expression */)) { return NotFound(); }
-
+            if (!_db.Writers.Any(w => w.Id == id)) { return NotFound(); }
+            Writer writer = _db.Writers.Single(w => w.Id == id);
             //TODO: Make changes to DbContext, save to Database -> return Accepted();
-
+            _db.Writers.Remove(writer);
+            _db.SaveChanges();
             return Accepted();
         }
         /**
@@ -45,10 +46,15 @@ namespace IndyBooks.Controllers
         public IActionResult Post([FromBody]Writer writer)
         {
             //TODO: Test for an invalid ModelState -> return BadRequest();
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
             //TODO: Make changes to DbContext, save to Database -> return Accepted(writer);
 
+            _db.Writers.Add(writer);
+            _db.SaveChanges();
             return Accepted(writer);
 
         }
@@ -56,31 +62,40 @@ namespace IndyBooks.Controllers
          * READ: Retrieves a particular writer with the given {id}
          * uses a GET verb with the URL pattern "api/writers/41"
          */
-        //[HttpGet("{id}")] //TODO: uncomment this annotation and create the method
-
-        //{
-        //TODO: Test for missing record using Any() -> return NotFound();
-
-
-        //TODO: Make changes to DbContext, save to Database -> return Ok(writer);
-        //}
+        [HttpGet("{id}")] //TODO: uncomment this annotation and create the method
+        public IActionResult Get(long id)
+        {
+            //TODO: Test for missing record using Any() -> return NotFound();
+            if (!_db.Writers.Any(w => w.Id == id)) { return NotFound(); }
+            Writer writer = _db.Writers.Single(w => w.Id == id);
+            //TODO: Make changes to DbContext, save to Database -> return Ok(writer);
+            return Ok(writer);
+        }
 
         /** 
          * UPDATE: Modify a given writer with id and [FromBody]Writer writer parameters
          * uses a PUT verb with the URL pattern "api/writers/16"
          */
-        //[HttpPut("{id}")] //TODO: uncomment this annotation and create the method
+        [HttpPut("{id}")] //TODO: uncomment this annotation and create the method
+        public IActionResult Put(long id, [FromBody] Writer writer)
+        {
+            //TODO: Test for an invalid ModelState -> return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (!_db.Writers.Any(w => w.Id == id)) { return NotFound(); }
 
-        //{
-        //TODO: Test for an invalid ModelState -> return BadRequest();
-
-
-        //TODO: Test for missing record using Any() -> return NotFound();
-
+            //TODO: Test for missing record using Any() -> return NotFound();
+            
+            writer.Id = id;
+            _db.Update(writer);
+            _db.SaveChanges();
+            return Accepted(writer);
 
         //TODO: Make changes to DbContext, save to Database -> return Accepted(writer);
 
-        //}
-    }
+        }
+}
 }
 
